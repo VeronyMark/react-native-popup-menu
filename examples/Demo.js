@@ -15,6 +15,9 @@ import FlatListExample from './FlatListExample';
 import InFlatListExample from './InFlatListExample';
 import PopoverExample from './PopoverExample';
 
+import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
+
+
 const demos = [
     {Component: BasicExample, name: 'Basic example'},
     {Component: Example, name: 'Advanced example'},
@@ -55,23 +58,29 @@ export default class Demo extends Component {
     }
 
     render() {
-        if (this.state.selected) {
-            const SelectedComponent = this.state.selected;
-            return (
-                <View style={styles.demoContainer} {...this.panResponder.panHandlers}>
-                    <SelectedComponent/>
-                </View>
-            );
-        }
-        return (
-            <View style={styles.container}>
-                <View>
-                    <Text>Select example:</Text>
-                    {demos.map(this.renderDemo, this)}
-                </View>
-            </View>
-        );
-    }
+       return (
+         <SafeAreaInsetsContext.Consumer>
+           {(insets) => {
+             const insetStyle = getInsetStyle(insets);
+             if (this.state.selected) {
+               const SelectedComponent = this.state.selected;
+               return (
+                 <View style={[styles.demoContainer, insetStyle]} {...this.panResponder.panHandlers}>
+                   <SelectedComponent />
+                 </View>
+               );
+             }
+
+             return (
+               <View style={[styles.container, insetStyle]}>
+                 <Text>Select example:</Text>
+                 {demos.map(this.renderDemo, this)}
+               </View>
+             );
+           }}
+         </SafeAreaInsetsContext.Consumer>
+       );
+     }
 
     renderDemo(demo, idx) {
 //      const type = `${idx + 1}. ${demo.name}`;
@@ -85,6 +94,13 @@ export default class Demo extends Component {
         );
     }
 }
+
+const getInsetStyle = (insets) => ({
+  paddingTop: insets.top,
+  paddingBottom: insets.bottom,
+  paddingLeft: insets.left,
+  paddingRight: insets.right,
+});
 
 const styles = StyleSheet.create({
     container: {
