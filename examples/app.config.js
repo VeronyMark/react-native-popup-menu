@@ -27,6 +27,7 @@ module.exports = () => {
             foregroundImage: "./assets/splash.png",
             backgroundColor: "#FFFFFF",
           },
+          enableProguardInReleaseBuilds: true,
         },
          extra: {
               eas: {
